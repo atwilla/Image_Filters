@@ -15,9 +15,8 @@ class Manga():
 
 		return self.c2
 
-	def filter_image(self, file_name):
-		img = Image.open(file_name).convert(mode="L")
-		return img.point(lambda pixel: self.modify_pixel(pixel))
+	def filter_image(self, img):
+		return img.convert(mode="L").point(lambda pixel: self.modify_pixel(pixel))
 
 
 class Inverse():
@@ -28,9 +27,8 @@ class Inverse():
 	def modify_pixel(self, pixel_value):
 		return 255 - pixel_value
 
-	def filter_image(self, file_name):
-		img = Image.open(file_name).convert(mode="RGB")
-		bands = img.split()
+	def filter_image(self, img):
+		bands = img.convert(mode="RGB").split()
 		new_bands = [None, None, None]
 
 		for i in range(3):
@@ -52,9 +50,8 @@ class AmplifyBands():
 
 		return new_val
 
-	def filter_image(self, file_name):
-		img = Image.open(file_name).convert(mode="RGB")
-		img_bands = img.split()
+	def filter_image(self, img):
+		img_bands = img.convert(mode="RGB").split()
 		new_bands = [0, 0, 0]
 
 		for i in range(3):
