@@ -58,3 +58,28 @@ class AmplifyBands():
 			new_bands[i] = img_bands[i].point(lambda pixel: self.modify_pixel(pixel, self.factors[i]))
 
 		return Image.merge("RGB", new_bands)
+
+
+class RestrictColors():
+
+	def __init__(self, c1=(0, 0, 0), c2=(255, 255, 255), cutoff=128):
+		self.c1 = c1
+		self.c2 = c2
+		self.cutoff = cutoff
+
+	def modify_pixel(self, band, pixel):
+
+		if pixel < self.cutoff:
+			return self.c1[band]
+
+		else:
+			return self.c2[band]
+
+	def filter_image(self, img):
+		new_bands = [None, None, None]
+		bw = img.convert(mode="L")
+
+		for i in range(3):
+			new_bands[i] = bw.point(lambda pixel: self.modify_pixel(i, pixel))
+
+		return Image.merge("RGB", new_bands)
