@@ -1,4 +1,5 @@
 from PIL import Image
+from random import randint, uniform
 import numpy as np
 
 class Manga():
@@ -83,3 +84,44 @@ class RestrictColors():
 			new_bands[i] = bw.point(lambda pixel: self.modify_pixel(i, pixel))
 
 		return Image.merge("RGB", new_bands)
+
+
+class Discombobulate():
+
+	def __init__(self, probability):
+		self.probability = probability
+
+	def set_probability(self, probability):
+		self.probability = probability
+
+	def skew_pixel(self, pixel):
+
+		if uniform(0, 1) < self.probability:
+			offset = randint(-255, 255)
+
+			if pixel + offset > 255:
+				return 255
+
+			if pixel + offset < 0:
+				return 0
+
+			return pixel + offset
+
+		return pixel
+
+	def filter_image(self, img):
+		bands = img.convert(mode="RGB").split()
+		new_bands = [None, None, None]
+
+		for i in range(3):
+			new_bands[i] = bands[i].point(lambda pixel: self.skew_pixel(pixel))
+
+		return Image.merge("RGB", new_bands)
+
+disc = Discombobulate(0.9)
+test_image = Image.open("ger.png")
+
+for i in range(5):
+	test_image = disc.filter_image(test_image)
+
+test_image.show()
