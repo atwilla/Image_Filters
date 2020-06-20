@@ -63,18 +63,25 @@ class AmplifyBands():
 
 class RestrictColors():
 
-	def __init__(self, c1=(0, 0, 0), c2=(255, 255, 255), cutoff=128):
-		self.c1 = c1
-		self.c2 = c2
-		self.cutoff = cutoff
+	def __init__(self, colors=[(0, 0, 0), (255, 255, 255)], cutoffs=[128]):
+
+		if len(cutoffs) != len(colors) - 1:
+			raise ValuError("Error: mismatch between number of cutoffs and number of colors.")
+
+		self.colors = colors
+		self.cutoffs = cutoffs
 
 	def modify_pixel(self, band, pixel):
 
-		if pixel < self.cutoff:
-			return self.c1[band]
+		new_val = self.colors[-1][band]
 
-		else:
-			return self.c2[band]
+		for i in range(len(self.cutoffs)):
+
+			if pixel < self.cutoffs[i]:
+				new_val = self.colors[i][band]
+				break
+
+		return new_val
 
 	def filter_image(self, img):
 		new_bands = [None, None, None]
@@ -88,7 +95,7 @@ class RestrictColors():
 
 class Discombobulate():
 
-	def __init__(self, probability):
+	def __init__(self, probability=0.5):
 		self.probability = probability
 
 	def set_probability(self, probability):
@@ -118,10 +125,13 @@ class Discombobulate():
 
 		return Image.merge("RGB", new_bands)
 
-disc = Discombobulate(0.9)
-test_image = Image.open("ger.png")
+disc = Discombobulate(0.25)
+test_image = Image.open("cid_small.jpg")
 
-for i in range(5):
+for i in range(2):
 	test_image = disc.filter_image(test_image)
 
 test_image.show()
+
+# restrict = RestrictColors([(0, 0, 0), (255, 0, 0), (255, 255, 255)], [85, 125])
+# restrict.filter_image(test_image).show()
