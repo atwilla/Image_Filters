@@ -124,14 +124,3 @@ class Discombobulate():
 			new_bands[i] = bands[i].point(lambda pixel: self.skew_pixel(pixel))
 
 		return Image.merge("RGB", new_bands)
-
-disc = Discombobulate(0.25)
-test_image = Image.open("cid_small.jpg")
-
-for i in range(2):
-	test_image = disc.filter_image(test_image)
-
-test_image.show()
-
-# restrict = RestrictColors([(0, 0, 0), (255, 0, 0), (255, 255, 255)], [85, 125])
-# restrict.filter_image(test_image).show()
